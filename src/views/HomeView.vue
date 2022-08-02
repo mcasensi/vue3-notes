@@ -3,8 +3,12 @@
         <div class="layoutJSON">
             Displayed as <code>[x, y, w, h]</code>:
             <div class="columns">
-                <div class="layoutItem" v-for="item in layout" :key="item.i">
-                    <b>{{ item.i }}</b
+                <div
+                    class="layoutItem"
+                    v-for="(item, index) in layout"
+                    :key="item.i"
+                >
+                    <b>{{ index }}</b
                     >: [{{ item.x }}, {{ item.y }}, {{ item.w }}, {{ item.h }}]
                 </div>
             </div>
@@ -20,6 +24,8 @@
             :is-resizable="resizable"
             :vertical-compact="true"
             :use-css-transforms="true"
+            :responsive="responsive"
+            @breakpoint-changed="breakpointChangedEvent"
         >
             <grid-item
                 v-for="(item, index) in layout"
@@ -30,8 +36,14 @@
                 :w="item.w"
                 :h="item.h"
                 :i="item.i"
+                :preserve-aspect-ratio="true"
             >
-                <span class="text">{{ item.i }}</span>
+                <span class="text" v-if="item.type == 'text'">{{
+                    item.i
+                }}</span>
+                <div v-if="item.type == 'image'">
+                    <img :src="item.i" />
+                </div>
                 <span class="remove" @click="removeItem(item.i)">x</span>
             </grid-item>
         </grid-layout>
@@ -48,11 +60,32 @@ export default {
     data() {
         return {
             layout: [
-                { x: 0, y: 0, w: 2, h: 2, i: "0" },
-                { x: 2, y: 0, w: 2, h: 2, i: "1" },
-                { x: 4, y: 0, w: 2, h: 2, i: "2" },
-                { x: 6, y: 0, w: 2, h: 2, i: "3" },
-                { x: 8, y: 0, w: 2, h: 2, i: "4" },
+                {
+                    x: 0,
+                    y: 0,
+                    w: 2,
+                    h: 5,
+                    i: "https://images.pexels.com/photos/5720783/pexels-photo-5720783.jpeg",
+                    type: "image",
+                },
+                {
+                    x: 2,
+                    y: 0,
+                    w: 2,
+                    h: 2,
+                    i: "Creativity often responds well to some constraints or limitations. Picking a keyword, theme, color or style can be a great way to give some direction to your moodboard.",
+                    type: "text",
+                },
+                {
+                    x: 4,
+                    y: 0,
+                    w: 2,
+                    h: 5,
+                    i: "https://images.pexels.com/photos/12913495/pexels-photo-12913495.jpeg",
+                    type: "image",
+                },
+                { x: 6, y: 0, w: 2, h: 2, i: "3", type: "image" },
+                { x: 8, y: 0, w: 2, h: 2, i: "4", type: "image" },
             ],
             draggable: true,
             resizable: true,
